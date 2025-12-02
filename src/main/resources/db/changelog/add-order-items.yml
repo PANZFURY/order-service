@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: idx-order-items-order-id
+      author: postgres
+      changes:
+        - createIndex:
+            indexName: idx_order_items_order_id
+            tableName: order_items
+            columns:
+              - column:
+                  name: order_id
+
+  - changeSet:
+      id: idx-order-items-item-id
+      author: postgres
+      changes:
+        - createIndex:
+            indexName: idx_order_items_item_id
+            tableName: order_items
+            columns:
+              - column:
+                  name: item_id
