@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Data
-public class Order {
+public class Order extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
