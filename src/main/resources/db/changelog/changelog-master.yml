@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/create-items.yml
+
+  - include:
+      file: db/changelog/create-orders.yml
+
+  - include:
+      file: db/changelog/create-order-items.yml
