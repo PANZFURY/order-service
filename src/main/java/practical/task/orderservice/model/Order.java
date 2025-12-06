@@ -15,12 +15,12 @@ public class Order extends Auditable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long user_id;
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    private Long total_price;
+    private Long totalPrice;
 
     private boolean deleted;
 
