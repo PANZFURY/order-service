@@ -2,6 +2,11 @@ databaseChangeLog:
   - changeSet:
       id: create-items-table
       author: postgres
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: items
       changes:
         - createTable:
             tableName: items
