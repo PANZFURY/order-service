@@ -7,5 +7,5 @@ import practical.task.orderservice.model.Order;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
-    List<Order> findByUserIdAndDeletedFalse(Long userId);
+    List<Order> findByUserId(Long userId);
 }
