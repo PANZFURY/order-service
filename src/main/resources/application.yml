@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: local
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.yml
+    enabled: true
+server:
+  port: 8081

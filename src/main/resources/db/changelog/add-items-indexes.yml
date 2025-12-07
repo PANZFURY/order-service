@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: idx-items-name
+      author: postgres
+      changes:
+        - createIndex:
+            indexName: idx_items_name
+            tableName: items
+            columns:
+              - column:
+                  name: name
