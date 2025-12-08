@@ -10,7 +10,7 @@ import practical.task.orderservice.service.impl.OrderServiceImpl;
 public interface OrderMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "items", source = "items")
+    @Mapping(target = "items", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "deleted", constant = "false")
