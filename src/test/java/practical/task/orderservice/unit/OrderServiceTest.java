@@ -71,7 +71,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void createOrder_success() {
+    void createOrderSuccess() {
         //given
         when(mapper.toEntity(orderCreateDto)).thenReturn(order);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
@@ -90,7 +90,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderById_success() {
+    void getOrderByIdSuccess() {
         //given
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(mapper.toDto(order, orderService)).thenReturn(orderResponseDto);
@@ -105,7 +105,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateOrder_success() {
+    void updateOrderSuccess() {
         //given
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
@@ -122,7 +122,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void deleteOrder_success() {
+    void deleteOrderSuccess() {
         //given
         order.setDeleted(false);
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
@@ -134,4 +134,107 @@ class OrderServiceTest {
         assertTrue(order.isDeleted());
         verify(orderRepository).save(order);
     }
+
+    @Test
+    void createOrderItemNotFoundShouldThrowException() {
+        //given
+        when(mapper.toEntity(orderCreateDto)).thenReturn(order);
+        when(itemRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when+then
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> orderService.createOrder(orderCreateDto)
+        );
+
+        assertTrue(ex.getMessage().contains("Item not found"));
+        verify(orderRepository, never()).save(any());
+    }
+
+    @Test
+    void getOrderByIdNotFoundShouldThrowException() {
+        //given
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when + then
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> orderService.getOrderById(1L)
+        );
+
+        assertEquals("Order not found", ex.getMessage());
+    }
+
+    @Test
+    void getOrderByIdDeletedOrderShouldThrowException() {
+        //given
+        order.setDeleted(true);
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+        //when+then
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> orderService.getOrderById(1L)
+        );
+
+        assertEquals("Order not found", ex.getMessage());
+    }
+
+    @Test
+    void updateOrderNotFoundShouldThrowException() {
+        //given
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when+then
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> orderService.updateOrder(1L, orderCreateDto)
+        );
+
+        assertEquals("Order not found", ex.getMessage());
+    }
+
+    @Test
+    void updateOrderItemNotFoundShouldThrowException() {
+        //given
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(itemRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when+then
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> orderService.updateOrder(1L, orderCreateDto)
+        );
+
+        assertTrue(ex.getMessage().contains("Item not found"));
+        verify(orderRepository, never()).save(any());
+    }
+
+    @Test
+    void deleteOrderNotFoundShouldThrowException() {
+        //given
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //when+then
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> orderService.deleteOrder(1L)
+        );
+
+        assertEquals("Order not found", ex.getMessage());
+    }
+
+    @Test
+    void deleteOrderAlreadyDeletedShouldDoNothing() {
+        //given
+        order.setDeleted(true);
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+        //when
+        orderService.deleteOrder(1L);
+
+        //then
+        verify(orderRepository, never()).save(any());
+    }
+
 }
