@@ -2,6 +2,11 @@ databaseChangeLog:
   - changeSet:
       id: create-orders-table
       author: postgres
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: orders
       changes:
         - createTable:
             tableName: orders
