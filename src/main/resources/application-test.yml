@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16:///testdb
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+user:
+  service:
+    url: localhost:8080
