@@ -60,8 +60,6 @@ jobs:
     name: Docker Build & Push
     needs: build-test-analyze
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/feature/pipeline'
-
 
     steps:
       - name: Checkout repository
