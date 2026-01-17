@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: test
   liquibase:
     change-log: classpath:/db/changelog/changelog-master.yml
     enabled: true
