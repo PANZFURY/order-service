@@ -71,6 +71,7 @@ public class OrderServiceImpl implements OrderService {
         return responseDto;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public OrderResponseDto getOrderById(Long id) {
         Order order = orderRepository.findById(id)
