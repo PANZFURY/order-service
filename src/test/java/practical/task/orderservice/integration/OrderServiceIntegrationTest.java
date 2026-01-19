@@ -1,6 +1,8 @@
 package practical.task.orderservice.integration;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,8 +19,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import practical.task.orderservice.model.Item;
 import practical.task.orderservice.repository.ItemRepository;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import com.github.tomakehurst.wiremock.client.WireMock.*;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Testcontainers
@@ -74,8 +77,8 @@ class OrderServiceIntegrationTest {
         itemRepository.save(item);
 
         wireMockServer.stubFor(
-                get(urlPathMatching("/api/user/get/1"))
-                        .willReturn(aResponse()
+                WireMock.get(WireMock.urlPathMatching("/api/user/get/1"))
+                        .willReturn(WireMock.aResponse()
                                 .withHeader("Content-Type", "application/json")
                                 .withStatus(200)
                                 .withBody("""
@@ -108,4 +111,85 @@ class OrderServiceIntegrationTest {
                 .andExpect(jsonPath("$.user.email").value("test@example.com"))
                 .andExpect(jsonPath("$.items[0].quantity").value(2));
     }
+
+    @Test
+    void testCreateOrder_itemNotFound() throws Exception {
+        String json = """
+            {
+              "userId": 1,
+              "items": [
+                { "itemId": 999, "quantity": 1 }
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/api/orders/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Item not found: 999"));
+    }
+
+    @Test
+    void testGetOrderById() throws Exception {
+        String createJson = """
+    {
+      "userId": 1,
+      "items": [
+        { "itemId": 1, "quantity": 1 }
+      ]
+    }
+    """;
+
+        String response = mockMvc.perform(post("/api/orders/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createJson))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Number orderIdNum = JsonPath.read(response, "$.id");
+        long orderId = orderIdNum.longValue();
+
+        mockMvc.perform(get("/api/orders/" + orderId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(orderId))
+                .andExpect(jsonPath("$.items").isArray());
+    }
+
+    @Test
+    void testGetDeletedOrder_notFound() throws Exception {
+        String createJson = """
+        {
+            "userId": 1,
+            "items": [
+                {
+                 "itemId": 1,
+                  "quantity": 1
+                }
+            ]
+        }
+        """;
+
+        String response = mockMvc.perform(post("/api/orders/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createJson))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Number orderIdNum = JsonPath.read(response, "$.id");
+        long orderId = orderIdNum.longValue();
+
+        mockMvc.perform(delete("/api/orders/" + orderId))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/orders/" + orderId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Order not found"));
+    }
+
 }
