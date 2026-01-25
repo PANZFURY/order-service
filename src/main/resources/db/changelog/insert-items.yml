@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-insert-items
+      author: postgres
+      changes:
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Item 1
+              - column:
+                  name: price
+                  valueNumeric: "100"
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Item 2
+              - column:
+                  name: price
+                  valueNumeric: "200"
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Item 3
+              - column:
+                  name: price
+                  valueNumeric: "300"

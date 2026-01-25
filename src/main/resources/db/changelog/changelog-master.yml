@@ -16,3 +16,6 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/add-order-items-indexes.yml
+
+  - include:
+      file: db/changelog/insert-items.yml
