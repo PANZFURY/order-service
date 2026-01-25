@@ -156,4 +156,12 @@ public class OrderServiceImpl implements OrderService {
 
         return fallback;
     }
+
+    @Transactional
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow();
+
+        order.setStatus(status);
+    }
 }

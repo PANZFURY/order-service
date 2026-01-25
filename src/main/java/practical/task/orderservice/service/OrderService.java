@@ -15,5 +15,6 @@ public interface OrderService {
     Page<OrderResponseDto> getOrders(Instant from, Instant to, List<OrderStatus> statuses, Pageable pageable);
     List<OrderResponseDto> getOrdersByUserId(Long userId);
     OrderResponseDto updateOrder(Long id, OrderCreateDto updateDto);
+    void updateOrderStatus(Long orderId, OrderStatus status);
     void deleteOrder(Long id);
 }
