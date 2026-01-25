@@ -13,7 +13,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 #      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -h localhost -U postgres -d orders_db"]
       interval: 5s
       retries: 10
     networks:
